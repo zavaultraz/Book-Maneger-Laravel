@@ -28,7 +28,7 @@
             <table class="table table-bordered">
                 <thead class="thead-light">
                     <tr>
-                        <th scope="col">#</th>
+                        <th scope="col">No</th>
                         <th scope="col">Place Name</th>
                     </tr>
                 </thead>
