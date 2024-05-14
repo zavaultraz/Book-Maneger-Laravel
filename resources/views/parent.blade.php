@@ -46,15 +46,18 @@
                 </div>
             </div>
         </div>
+        @include('tabel')
         <div class="card mt-3">
             <div class="card-body">
                 <h3 class="card-title text-center">Add Books</h3>
                 <form action="{{route('book.store')}}" enctype="multipart/form-data" method="post">
+                    @csrf
+                    @method('POST')
                     <label for="InputTitle" class="form-label fs-5 mt-2">Judul Buku</label>
                     <input type="text" class="form-control" id="InputTitle" name="title" placeholder="Book Title">
 
                     <div class="col-sm-10">
-                    <label for="InputTitle" class="form-label fs-5 mt-2">Genre Buku</label>
+                        <label for="InputTitle" class="form-label fs-5 mt-2">Genre Buku</label>
                         <select class="form-select" name="category_id" aria-label="Default select example">
                             <option selected>--Select Category--</option>
                             @foreach ($category as $row)
@@ -71,10 +74,10 @@
                     <input type="text" class="form-control" id="InputTitle" name="publishing" placeholder="Book Publisher">
 
                     <label for="InputTitle" class="form-label fs-5 mt-2">Edisi Buku</label>
-                    <input type="text" class="form-control" id="InputTitle" name="publishing" placeholder="Book Edition">
+                    <input type="text" class="form-control" id="InputTitle" name="edition" placeholder="Book Edition">
 
                     <label for="InputTitle" class="form-label fs-5 mt-2">ISBN</label>
-                    <input type="number" class="form-control" id="InputTitle" name="isbn" placeholder="kode isbn">
+                    <input type="text" class="form-control" id="InputTitle" name="isbn" placeholder="kode isbn">
 
                     <label for="formFile" class="form-label mt-2 fs-5">Cover</label>
                     <input class="form-control" type="file" id="formFile" name="image">
@@ -83,26 +86,62 @@
                     <input class="form-control" type="file" id="formFile" name="pdf">
 
                     <label for="InputTitle" class="form-label fs-5 mt-2">Lokasi Buku</label>
-                        <select class="form-select" name="place_id" aria-label="Default select example">
-                            <option selected>--Select Place--</option>
-                            @foreach ($place as $row)
-                            <option value="{{$row->id}}">{{$row->name}}</option>
+                    <select class="form-select" name="place_id" aria-label="Default select example">
+                        <option selected>--Select Place--</option>
+                        @foreach ($place as $row)
+                        <option value="{{$row->id}}">{{$row->name}}</option>
 
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <button type="submit" class="mt-3 btn btn-primary">Add Book</button>
-                </form>
+                        @endforeach
+                    </select>
             </div>
+
+            <button type="submit" class="mt-3 btn btn-primary">Add Book</button>
+            </form>
         </div>
+    </div>
+    <h1 class="fs-1 text-center">_______________________________________</h1>
+    <h2 class="text-center mt-3">Library📓 </h2>
+    <div class="container">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach ($book as $row)
+            <div class="col">
+                <div class="card" style="width: 20rem;">
+                    <img src="{{url ('storage/book', $row->image) }}" class="image-thumbnail" alt="...">
+                    <div class="card-body">
+                        <h3 class="card-title mb-3">{{$row->title}}</h3>
+                        <a href="{{url('storage/book', $row->pdf)}}" class="ink-offset-1 fs-5">digital book</a>
+                        <h5 class="fs-5">Genre : {{$row->category->name}}</h5>
+                        <h5 class="fs-5">Edisi : {{$row->edition}}</h5>
+                        <h5 class="fs-5">Author : {{$row->author}}</h5>
+                        <h5 class="fs-5">Place : {{$row->place->name}}</h5>
+
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editbook{{$row->id}}">
+                            Update
+                        </button>
+                        @include('category.edit')
+
+
+                        <form action="{{ route('book.destroy', $row->id) }}" method="post">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger mt-2">Delete</button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+            @endforeach
+
+
+        </div>
+    </div>
     </div>
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
     <script>
         //sweetalert for success or error message
-        @if(session() -> has('success'))
+        @if(session()-> has('success'))
         swal({
             type: "success",
             icon: "success",
@@ -113,7 +152,7 @@
             showCancelButton: false,
             buttons: false,
         });
-        @elseif(session() -> has('error'))
+        @elseif(session()-> has('error'))
         swal({
             type: "error",
             icon: "error",
@@ -124,7 +163,7 @@
             showCancelButton: false,
             buttons: false,
         });
-        @elseif(session() -> has('info'))
+        @elseif(session()-> has('info'))
         swal({
             type: "info",
             icon: "info",
